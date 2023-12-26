@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js">
+  <link rel="stylesheet" href="static/dashboard.css">
+  <style>
+    /* Add your custom styles here */
+
+  </style>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <nav>
+    <a href="{{ url_for('display_students') }}">Student list </a>|
+    <a href="{{ url_for('AddStudentform') }}"> Add student</a>
+  </nav>
+
+  <!-- Top 5 interests -->
+  <div class="row">
+    <div class="col">
+        <div class="top-interests">
+            <h2>Top 5 Interests</h2>
+            <!-- Green tiles for top 5 interests -->
+            {% for interest in interests[:5] %}
+                <div class="interest-tile" style="background-color: green;">{{ interest }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bottom 5 interests -->
+    <div class="col">
+    <div class="bottom-interests">
+        <h2>Bottom 5 Interests</h2>
+        <!-- Red tiles for bottom 5 interests -->
+        {% for interest in interests[-5:] %}
+            <div class="interest-tile" style="background-color: red;">{{ interest }}</div>
+        {% endfor %}
+    </div>
+</div>
+
+</div>
+
+  <!-- Distinct interests -->
+  <div class="distinct-interests">
+    <h2>Distinct Interests</h2>
+    <!-- Number of interests in the system -->
+    <p>Total Interests: {{ interests|length }}</p>
+</div>
+
+  <!-- Provincial distribution -->
+  <div class="provincial-distribution">
+    <h2>Provincial Distribution</h2>
+    <!-- Pie chart for provincial distribution -->
+    <canvas id="provincialChart" class="chart-container"></canvas>
+  </div>
+
+  <div class="row">
+    <!-- Submission chart -->
+    <div class="col">
+      <div class="submission-chart">
+        <h2>Submission Chart</h2>
+        <!-- Line chart for number of students created daily in the last 30 days -->
+        <canvas id="submissionChart" class="chart-container"></canvas>
+      </div>
+    </div>
+
+    <!-- Age distribution -->
+    <div class="col">
+      <div class="age-distribution">
+        <h2>Age Distribution</h2>
+        <!-- Bar chart for age distribution -->
+        <canvas id="ageChart" class="chart-container"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Department distribution -->
+    <div class="col">
+      <div class="department-distribution">
+        <h2>Department Distribution</h2>
+        <!-- Pie chart for department distribution -->
+        <canvas id="departmentChart" class="chart-container"></canvas>
+      </div>
+    </div>
+
+    <!-- Degree distribution -->
+    <div class="col">
+      <div class="degree-distribution">
+        <h2>Degree Distribution</h2>
+        <!-- Pie chart for degree distribution -->
+        <canvas id="degreeChart" class="chart-container"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gender distribution -->
+  <div class="gender-distribution">
+    <h2>Gender Distribution</h2>
+    <!-- Pie chart for gender distribution -->
+    <canvas id="genderChart" class="chart-container"></canvas>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <!-- Last 30 days activity -->
+      <div class="last-30-days-activity">
+        <h2>Last 30 Days Activity</h2>
+        <!-- Line chart for the number of actions performed daily in the last 30 days -->
+        <canvas id="activityChart" class="chart-container"></canvas>
+      </div>
+    </div>
+
+    <div class="col">
+      <!-- Last 24 hours activity -->
+      <div class="last-24-hours-activity">
+        <h2>Last 24 Hours Activity</h2>
+        <!-- Line chart for the number of actions performed every 15 minutes for the last 24 hours -->
+        <canvas id="hourlyActivityChart" class="chart-container"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Students status grid -->
+  <div class="students-status-grid">
+    <h2>Students Status Grid</h2>
+    <!-- Number of students currently studying, recently enrolled, about to graduate, graduated -->
+    <p>Currently Studying: 400</p>
+    <p>Recently Enrolled: 40</p>
+    <p>About to Graduate: 20</p>
+    <p>Graduated: 200</p>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <!-- Most active hours in the last 30 days -->
+      <div class="most-active-hours">
+        <h2>Most Active Hours in Last 30 Days</h2>
+        <!-- List of hours with the most activity -->
+        <ul>
+          <li>9:00 AM</li>
+          <li>1:00 PM</li>
+          <li>5:00 PM</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <!-- Least active hours in the last 30 days -->
+      <div class="least-active-hours">
+        <h2>Least Active Hours in Last 30 Days</h2>
+        <!-- List of hours with the least activity -->
+        <ul>
+          <li>7:00 AM</li>
+          <li>10:00 AM</li>
+          <li>3:00 PM</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dead hours in the last 30 days -->
+  <div class="dead-hours">
+    <h2>Dead Hours in Last 30 Days</h2>
+    <!-- List of hours with next to zero activity -->
+    <ul>
+      <li>8:00 AM</li>
+      <li>11:00 AM</li>
+      <li>5:00 PM</li>
+    </ul>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Dummy data
+    const top5InterestsData = ['Interest 1', 'Interest 2', 'Interest 3', 'Interest 4', 'Interest 5'];
+    const bottom5InterestsData = ['Interest 6', 'Interest 7', 'Interest 8', 'Interest 9', 'Interest 10'];
+    const provincialDistributionData = {
+      labels: ['Province A', 'Province B', 'Province C'],
+      values: [30, 40, 30],
+      colors: ['red', 'green', 'blue'],
+    };
+    const submissionChartData = {
+      labels: ['Day 1', 'Day 2', 'Day 3'],
+      values: [10, 20, 15],
+      label: 'Submissions',
+    };
+    const ageDistributionData = {
+      labels: ['18-20', '21-25', '26-30'],
+      values: [50, 30, 20],
+    };
+    const departmentDistributionData = {
+      labels: ['Department X', 'Department Y', 'Department Z'],
+      values: [40, 30, 30],
+      colors: ['orange', 'purple', 'pink'],
+    };
+    const degreeDistributionData = {
+      labels: ['Bachelor', 'Master', 'PhD'],
+      values: [60, 25, 15],
+      colors: ['yellow', 'green', 'blue'],
+    };
+    const genderDistributionData = {
+      labels: ['Male', 'Female', 'Other'],
+      values: [45, 50, 5],
+      colors: ['blue', 'pink', 'gray'],
+    };
+    const last30DaysActivityData = {
+      labels: ['Day 1', 'Day 2', 'Day 3'],
+      values: [100, 120, 90],
+      label: 'Activity',
+    };
+    const hourlyActivityData = {
+      labels: ['12:00 AM', '3:00 AM', '6:00 AM', '9:00 AM', '12:00 PM', '3:00 PM', '6:00 PM', '9:00 PM'],
+      values: [5, 2, 10, 20, 30, 25, 15, 8],
+      label: 'Activity',
+    };
+
+    // Function to initialize and render a pie chart
+    function initializePieChart(chartId, data) {
+      const ctx = document.getElementById(chartId).getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            data: data.values,
+            backgroundColor: data.colors,
+          }],
+        },
+      });
+    }
+
+    // Function to initialize and render a line chart
+    function initializeLineChart(chartId, data) {
+      const ctx = document.getElementById(chartId).getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: data.label,
+            data: data.values,
+            borderColor: 'blue', // customize as needed
+            fill: false,
+          }],
+        },
+      });
+    }
+
+    // Function to initialize and render a bar chart
+    function initializeBarChart(chartId, data) {
+      const ctx = document.getElementById(chartId).getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: data.label,
+            data: data.values,
+            backgroundColor: 'blue', // customize as needed
+          }],
+        },
+      });
+    }
+
+    // Initialize and render charts with dummy data
+    initializePieChart('provincialChart', provincialDistributionData);
+    initializeLineChart('submissionChart', submissionChartData);
+    initializeBarChart('ageChart', ageDistributionData); // Use bar chart for age distribution
+    initializePieChart('departmentChart', departmentDistributionData);
+    initializePieChart('degreeChart', degreeDistributionData);
+    initializePieChart('genderChart', genderDistributionData);
+    initializeLineChart('activityChart', last30DaysActivityData);
+    initializeLineChart('hourlyActivityChart', hourlyActivityData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <style>
+        /* Add your CSS styles for pagination here */
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 150vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content:top;
+            align-items: center;
+            flex-direction: column;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 25px;
+            color: #fe1e50;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #282881;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        th a {
+            text-decoration: none;
+            color: black;
+            display: inline-block;
+            padding: 0 5px;
+        }
+
+        th a:hover {
+            text-decoration: underline;
+        }
+
+        th span {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            margin-left: 5px;
+            font-size:10px;
+        }
+
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #fff;
+            padding: 8px;
+            text-align: right;
+        }
+
+        th {
+            background-color: #282881;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>List of Students</h1>
+    <nav>
+    <a href="{{ url_for('dashboard') }}">Dashboard </a>|
+    <a href="{{ url_for('AddStudentform') }}"> Add student</a>
+    </nav>
+    <!-- Add the page size dropdown -->
+    <label for="page_size">Page Size:</label>
+    <select id="page_size" onchange="changePageSize()" value="{{ page_size }}">
+        <option value="5" {% if page_size == 5 %}selected{% endif %}>5</option>
+        <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+        <option value="20" {% if page_size == 20 %}selected{% endif %}>20</option>
+        <option value="30" {% if page_size == 30 %}selected{% endif %}>30</option>
+        <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+    </select>
+
+    <div class="pagination">
+        <a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column=sort_column, sort_order='asc') }}"><<</a>
+        <a href="{{ url_for('display_students', page=prev_page, page_size=page_size, sort_column=sort_column, sort_order='asc') }}"><</a>
+        Page {{ page }} of {{ total_pages }}
+        <a href="{{ url_for('display_students', page=next_page, page_size=page_size, sort_column=sort_column, sort_order='asc') }}">></a>
+        <a href="{{ url_for('display_students', page=total_pages, page_size=page_size, sort_column=sort_column, sort_order='asc') }}">>></a>
+    </div>
+
+    <script src="static/script.js"></script>
+
+   <table>
+    <!-- Table headers with sorting arrows -->
+    <tr>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='id', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">ID<span>{{ sort_column == 'id' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='full_name', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Full Name<span>{{ sort_column == 'full_name' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <!-- Add other columns with sorting links -->
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='roll_number', sort_order=(sort_column == 'roll_number' and sort_order == 'asc' and 'desc') or 'asc') }}">Roll Number<span>{{ sort_column == 'roll_number' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+
+        <!-- Repeat the pattern for other columns -->
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='email_address', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Email Address<span>{{ sort_column == 'email_address' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <!-- Add or remove columns as needed -->
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='gender', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Gender<span>{{ sort_column == 'gender' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='date_of_birth', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Date of Birth<span>{{ sort_column == 'date_of_birth' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='city', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">City<span>{{ sort_column == 'city' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='interest', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Interest<span>{{ sort_column == 'interest' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='department', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Department<span>{{ sort_column == 'department' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='degree_title', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Degree Title<span>{{ sort_column == 'degree_title' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='subject', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Subject<span>{{ sort_column == 'subject' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='start_date', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">Start Date<span>{{ sort_column == 'start_date' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th><a href="{{ url_for('display_students', page=1, page_size=page_size, sort_column='end_date', sort_order=sort_order|default('asc')=='asc' and 'desc' or 'asc') }}">End Date<span>{{ sort_column == 'end_date' and (sort_order == 'asc' and '▲' or '▼') or '▲▼' }}</span></a></th>
+        <th>Actions</th>
+    </tr>
+
+    {% for student in students %}
+        <tr>
+            <td>{{ student.id }}</td>
+            <td>{{ student.full_name }}</td>
+            <td>{{ student.roll_number }}</td>
+            <!-- Repeat the pattern for other columns -->
+            <td>{{ student.email_address }}</td>
+            <td>{{ student.gender }}</td>
+            <td>{{ student.date_of_birth }}</td>
+            <td>{{ student.city }}</td>
+            <td>{{ student.interest }}</td>
+            <td>{{ student.department }}</td>
+            <td>{{ student.degree_title }}</td>
+            <td>{{ student.subject }}</td>
+            <td>{{ student.start_date }}</td>
+            <td>{{ student.end_date }}</td>
+            <td>
+                <a href="{{ url_for('view_student', id=student.id) }}">View</a> |
+                <a href="{{ url_for('edit_student', id=student.id) }}">Edit</a> |
+                <a href="{{ url_for('delete_student', id=student.id) }}">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

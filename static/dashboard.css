@@ -1,0 +1,92 @@
+ body {
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      height: 150vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: top;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .col {
+      flex: 1;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 25px;
+      color: #fe1e50;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    h2 {
+      text-align: center;
+      color: black;
+    }
+
+    .interest-tile {
+      display: inline-block;
+      padding: 10px;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .top-interests,
+    .bottom-interests,
+    .distinct-interests,
+    .provincial-distribution,
+    .submission-chart,
+    .age-distribution,
+    .department-distribution,
+    .degree-distribution,
+    .gender-distribution,
+    .last-30-days-activity,
+    .last-24-hours-activity,
+    .students-status-grid,
+    .most-active-hours,
+    .least-active-hours,
+    .dead-hours {
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+      padding: 20px;
+      border-radius: 8px;
+    }
+     ul {
+            list-style-type: square;
+            padding: 0;
+        }
+
+    .chart-container {
+      max-width: 400px;
+      margin: 20px 0;
+    }
